@@ -99,7 +99,9 @@ def print_templog(temp_email):
 
 def generate_yopmail_email():
     username = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-    email = f"{username}@1xp.fr"
+    # --- MODIFICACIÓN CLAVE: Cambiando el dominio para evitar bloqueo ---
+    email = f"{username}@yopmail.com" # Cambiado de @1xp.fr a @yopmail.com
+    # -------------------------------------------------------------------
     return username, email
 
 def generate_random_string(length=12):
@@ -119,8 +121,7 @@ def main():
         print_templog(email)
         driver = None
         try:
-            # --- CORRECCIÓN DE SYNTAX ERROR ---
-            options = uc.ChromeOptions() # La 'I' de 'Import' debe ser minúscula en la Línea 1
+            options = uc.ChromeOptions()
             options.add_argument("--disable-popup-blocking")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
@@ -137,18 +138,15 @@ def main():
             driver.find_element(By.NAME, "username").send_keys(username)
             driver.find_element(By.NAME, "password").send_keys(email)
             
-            # --- PUNTO DE INTERVENCIÓN MANUAL ---
+            # --- PUNTO DE INTERVENCIÓN MANUAL (Fecha de nacimiento) ---
             
             print(f"{timestamp()} {Fore.YELLOW}--- ¡INTERVENCIÓN MANUAL REQUERIDA! ---{Style.RESET_ALL}")
-            print(f"{timestamp()} {Fore.CYAN}1. Por favor, selecciona manualmente el DÍA, MES y AÑO de nacimiento.{Style.RESET_ALL}")
-            print(f"{timestamp()} {Fore.CYAN}2. Luego, presiona el botón 'Continuar'.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.CYAN}1. Por favor, selecciona manualmente el DÍA, MES y AÑO de nacimiento en el navegador.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.CYAN}2. Luego, presiona el botón 'Continuar' en el navegador.{Style.RESET_ALL}")
             print(f"{timestamp()} {Fore.CYAN}3. Después de presionar 'Continuar', presiona ENTER en esta ventana de CMD para continuar con el Captcha.{Style.RESET_ALL}")
 
             # Esperar a que el usuario presione ENTER en la ventana de CMD
             input(f"{timestamp()} {Fore.GREEN}Presiona ENTER después de ingresar la fecha y presionar 'Continuar' en el navegador...{Style.RESET_ALL}\n")
-            
-            # El código para manejar el ratelimit del registro ya no es necesario aquí 
-            # ya que el usuario ya presionó "Continuar".
             
             print(f"{timestamp()} {Fore.BLUE}Por favor, resuelve el Captcha Manualmente. (Tiempo Máximo de Espera: 10 horas){Style.RESET_ALL}")
             
@@ -169,9 +167,10 @@ def main():
                 
             # --- VERIFICACIÓN MANUAL DEL EMAIL ---
             usernamebaba = email.split('@')[0]
-            driver.get(f"https://yopmail.com/en/?login={usernamebaba}")
+            # Navega al correo temporal usando la URL principal de Yopmail
+            driver.get(f"https://www.yopmail.com/en/?login={usernamebaba}") 
             
-            print(f"{timestamp()} {Fore.BLUE}Navigate a Yopmail y verifica el email manualmente.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.BLUE}Navega a Yopmail y verifica el email manualmente.{Style.RESET_ALL}")
             print(f"{timestamp()} {Fore.BLUE}Una vez verificado, CIERRA la ventana del navegador para que el script obtenga el token.{Style.RESET_ALL}")
             
             # Esperar a que el usuario cierre el navegador
