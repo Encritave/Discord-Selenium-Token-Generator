@@ -119,7 +119,8 @@ def main():
         print_templog(email)
         driver = None
         try:
-            options = uc.ChromeOptions()
+            # --- CORRECCIÓN DE SYNTAX ERROR ---
+            options = uc.ChromeOptions() # La 'I' de 'Import' debe ser minúscula en la Línea 1
             options.add_argument("--disable-popup-blocking")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
@@ -129,38 +130,29 @@ def main():
             driver.get("https://discord.com/register")
             WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "email")))
             
-            # --- Llenar Campos Estándar ---
+            # --- Llenar Campos Automáticamente ---
             driver.find_element(By.NAME, "email").send_keys(email)
             driver.find_element(By.NAME, "global_name").send_keys("Lunarxterm")
             username = generate_random_string()
             driver.find_element(By.NAME, "username").send_keys(username)
             driver.find_element(By.NAME, "password").send_keys(email)
             
-            # --- CÓDIGO DE FECHA DE NACIMIENTO MODIFICADO ---
-            # Valores usados: Día: '20', Mes: 'SEP', Año: '2000'
-            print(f"{timestamp()} {Fore.CYAN}Introduciendo fecha de nacimiento (20 SEP 2000).{Style.RESET_ALL}")
+            # --- PUNTO DE INTERVENCIÓN MANUAL ---
             
-            # Día (react-select-3-input)
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, 'react-select-3-input'))).send_keys('20', Keys.RETURN)
-            # Mes (react-select-2-input)
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, 'react-select-2-input'))).send_keys('SEP', Keys.RETURN)
-            # Año (react-select-4-input)
-            WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, 'react-select-4-input'))).send_keys('2000', Keys.RETURN)
-            # --- FIN CÓDIGO DE FECHA DE NACIMIENTO ---
+            print(f"{timestamp()} {Fore.YELLOW}--- ¡INTERVENCIÓN MANUAL REQUERIDA! ---{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.CYAN}1. Por favor, selecciona manualmente el DÍA, MES y AÑO de nacimiento.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.CYAN}2. Luego, presiona el botón 'Continuar'.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.CYAN}3. Después de presionar 'Continuar', presiona ENTER en esta ventana de CMD para continuar con el Captcha.{Style.RESET_ALL}")
 
-            continue_button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//button[@type="submit"]')))
+            # Esperar a que el usuario presione ENTER en la ventana de CMD
+            input(f"{timestamp()} {Fore.GREEN}Presiona ENTER después de ingresar la fecha y presionar 'Continuar' en el navegador...{Style.RESET_ALL}\n")
             
-            limit = account_ratelimit()
-            if limit > 1:
-                print(f'{timestamp()}{Fore.RED}[INFO] Ratelimited for {limit} seconds. Retrying after ratelimit disappears.')
-                time.sleep(limit)
-                continue
-                
-            continue_button.click()
+            # El código para manejar el ratelimit del registro ya no es necesario aquí 
+            # ya que el usuario ya presionó "Continuar".
             
-            print(f"{timestamp()} {Fore.BLUE}Please Solve Captcha Manually. (Tiempo Máximo de Espera: 10 horas){Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.BLUE}Por favor, resuelve el Captcha Manualmente. (Tiempo Máximo de Espera: 10 horas){Style.RESET_ALL}")
             
-            # --- MODIFICACIÓN CLAVE: Espera extendida para el Captcha ---
+            # --- ESPERA EXTENDIDA PARA EL CAPTCHA ---
             TIEMPO_MAXIMO_CAPTCHA = 36000 # 10 horas
             
             while True:
@@ -175,11 +167,12 @@ def main():
                     print(f"{timestamp()} {Fore.RED}Ocurrió un error inesperado durante la espera del Captcha: {e}{Style.RESET_ALL}")
                     break
                 
+            # --- VERIFICACIÓN MANUAL DEL EMAIL ---
             usernamebaba = email.split('@')[0]
             driver.get(f"https://yopmail.com/en/?login={usernamebaba}")
             
-            print(f"{timestamp()} {Fore.BLUE}Navigate to Yopmail and verify email manually.{Style.RESET_ALL}")
-            print(f"{timestamp()} {Fore.BLUE}Once you've solved the CAPTCHA and clicked the verification link, Close the Browser to continue.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.BLUE}Navigate a Yopmail y verifica el email manualmente.{Style.RESET_ALL}")
+            print(f"{timestamp()} {Fore.BLUE}Una vez verificado, CIERRA la ventana del navegador para que el script obtenga el token.{Style.RESET_ALL}")
             
             # Esperar a que el usuario cierre el navegador
             while True:
@@ -206,7 +199,7 @@ def main():
                 finally:
                     driver = None 
                     
-# --- FUNCIÓN DE LOGIN/TOKEN MODIFICADA ---
+# --- FUNCIÓN DE LOGIN/TOKEN ---
 
 def login_and_fetch_token(email, password):
     data = {"email": email, "password": password, "undelete": "false"}
@@ -221,7 +214,7 @@ def login_and_fetch_token(email, password):
             
             print(f"{timestamp()} {Fore.GREEN}Token fetched: {token}{Style.RESET_ALL}")
             
-            # --- MODIFICACIÓN: Guardar en hola.txt ---
+            # --- Guardar en hola.txt ---
             with open("hola.txt", "a") as f:
                 f.write(f"{email}:{password}:{token}\n")
             
@@ -235,4 +228,4 @@ def login_and_fetch_token(email, password):
 
 if __name__ == "__main__":
     main()
-      
+        
